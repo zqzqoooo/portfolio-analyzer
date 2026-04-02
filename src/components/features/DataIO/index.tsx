@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Upload, Download, FileJson, FileSpreadsheet } from 'lucide-react';
 import { Button, Card } from '@/components/common';
 import { exportToJSON, exportToCSV, parseImportFile } from '@/services/storage';
@@ -11,12 +12,13 @@ interface DataIOProps {
 }
 
 export function DataIO({ stocks, onImport, showToast }: DataIOProps) {
+  const { t } = useTranslation();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [exportFormat, setExportFormat] = useState<ExportFormat>('json');
 
   const handleExport = () => {
     if (stocks.length === 0) {
-      showToast('暂无数据可导出', 'warning');
+      showToast(t('dataIO.noDataToExport'), 'warning');
       return;
     }
 
@@ -25,7 +27,7 @@ export function DataIO({ stocks, onImport, showToast }: DataIOProps) {
     } else {
       exportToCSV(stocks);
     }
-    showToast('导出成功', 'success');
+    showToast(t('dataIO.exportSuccess'), 'success');
   };
 
   const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,14 +43,14 @@ export function DataIO({ stocks, onImport, showToast }: DataIOProps) {
         const importedStocks = parseImportFile(content, format);
 
         if (importedStocks.length === 0) {
-          showToast('文件中没有有效数据', 'warning');
+          showToast(t('dataIO.noValidData'), 'warning');
           return;
         }
 
         onImport(importedStocks);
-        showToast(`成功导入 ${importedStocks.length} 条数据`, 'success');
+        showToast(t('dataIO.importSuccess', { count: importedStocks.length }), 'success');
       } catch (error) {
-        showToast('文件格式错误，请检查文件内容', 'error');
+        showToast(t('dataIO.invalidFormat'), 'error');
       }
     };
 
@@ -62,7 +64,7 @@ export function DataIO({ stocks, onImport, showToast }: DataIOProps) {
     <Card>
       <div className="flex flex-wrap items-center gap-4">
         <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-600 dark:text-gray-400">导出格式:</span>
+          <span className="text-sm text-gray-600 dark:text-gray-400">{t('dataIO.exportFormat')}</span>
           <div className="flex rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
             <button
               onClick={() => setExportFormat('json')}
@@ -92,7 +94,7 @@ export function DataIO({ stocks, onImport, showToast }: DataIOProps) {
         <div className="flex gap-2">
           <Button variant="secondary" onClick={handleExport}>
             <Download className="w-4 h-4 mr-1" />
-            导出数据
+            {t('dataIO.exportData')}
           </Button>
 
           <input
@@ -104,7 +106,7 @@ export function DataIO({ stocks, onImport, showToast }: DataIOProps) {
           />
           <Button variant="secondary" onClick={() => fileInputRef.current?.click()}>
             <Upload className="w-4 h-4 mr-1" />
-            导入数据
+            {t('dataIO.importData')}
           </Button>
         </div>
       </div>

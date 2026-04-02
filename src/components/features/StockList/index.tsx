@@ -1,7 +1,8 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Edit2, Trash2, RefreshCw } from 'lucide-react';
 import { Card, EmptyState, ConfirmModal, Button } from '@/components/common';
-import { formatCurrency, formatPrice, formatPercent, getMarketLabel, getCurrencySymbol } from '@/utils/format';
+import { formatCurrency, formatPrice, formatPercent, getCurrencySymbol } from '@/utils/format';
 import type { StockWithCalculated, StockListProps, Stock } from '@/types';
 
 interface ExtendedStockListProps extends StockListProps {
@@ -9,6 +10,7 @@ interface ExtendedStockListProps extends StockListProps {
 }
 
 export function StockList({ stocks, onEdit, onDelete, onRefreshPrice, onRefreshAll }: ExtendedStockListProps) {
+  const { t } = useTranslation();
   const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; stock: Stock | null }>({
     isOpen: false,
     stock: null,
@@ -40,8 +42,8 @@ export function StockList({ stocks, onEdit, onDelete, onRefreshPrice, onRefreshA
     return (
       <Card>
         <EmptyState
-          title="暂无持仓数据"
-          description="请添加您的股票持仓，开始分析您的投资组合"
+          title={t('stockList.noData')}
+          description={t('stockList.noDataDescription')}
         />
       </Card>
     );
@@ -53,7 +55,7 @@ export function StockList({ stocks, onEdit, onDelete, onRefreshPrice, onRefreshA
     <>
       <div className="flex items-center justify-between mb-4">
         <span className="text-sm text-gray-500 dark:text-gray-400">
-          共 {stocks.length} 只股票
+          {t('stockList.totalStocks', { count: stocks.length })}
         </span>
         {onRefreshAll && (
           <Button
@@ -63,7 +65,7 @@ export function StockList({ stocks, onEdit, onDelete, onRefreshPrice, onRefreshA
             loading={isRefreshingAll}
           >
             <RefreshCw className="w-4 h-4 mr-1" />
-            一键刷新
+            {t('stockList.refreshAll')}
           </Button>
         )}
       </div>
@@ -72,15 +74,15 @@ export function StockList({ stocks, onEdit, onDelete, onRefreshPrice, onRefreshA
         <table className="w-full">
           <thead>
             <tr className="border-b border-gray-200 dark:border-gray-700">
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-400">代码</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-400">名称</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-400 hidden sm:table-cell">市场</th>
-              <th className="px-4 py-3 text-right text-sm font-medium text-gray-500 dark:text-gray-400">买入价</th>
-              <th className="px-4 py-3 text-right text-sm font-medium text-gray-500 dark:text-gray-400 hidden md:table-cell">数量</th>
-              <th className="px-4 py-3 text-right text-sm font-medium text-gray-500 dark:text-gray-400">现价</th>
-              <th className="px-4 py-3 text-right text-sm font-medium text-gray-500 dark:text-gray-400 hidden lg:table-cell">市值</th>
-              <th className="px-4 py-3 text-right text-sm font-medium text-gray-500 dark:text-gray-400">盈亏</th>
-              <th className="px-4 py-3 text-center text-sm font-medium text-gray-500 dark:text-gray-400">操作</th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-400">{t('stockList.code')}</th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-400">{t('stockList.name')}</th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-400 hidden sm:table-cell">{t('stockList.market')}</th>
+              <th className="px-4 py-3 text-right text-sm font-medium text-gray-500 dark:text-gray-400">{t('stockList.buyPrice')}</th>
+              <th className="px-4 py-3 text-right text-sm font-medium text-gray-500 dark:text-gray-400 hidden md:table-cell">{t('stockList.quantity')}</th>
+              <th className="px-4 py-3 text-right text-sm font-medium text-gray-500 dark:text-gray-400">{t('stockList.currentPrice')}</th>
+              <th className="px-4 py-3 text-right text-sm font-medium text-gray-500 dark:text-gray-400 hidden lg:table-cell">{t('stockList.marketValue')}</th>
+              <th className="px-4 py-3 text-right text-sm font-medium text-gray-500 dark:text-gray-400">{t('stockList.profitLoss')}</th>
+              <th className="px-4 py-3 text-center text-sm font-medium text-gray-500 dark:text-gray-400">{t('stockList.actions')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -101,10 +103,10 @@ export function StockList({ stocks, onEdit, onDelete, onRefreshPrice, onRefreshA
         isOpen={deleteConfirm.isOpen}
         onClose={() => setDeleteConfirm({ isOpen: false, stock: null })}
         onConfirm={handleDeleteConfirm}
-        title="确认删除"
-        message={`确定要删除 ${deleteConfirm.stock?.name || deleteConfirm.stock?.code} 吗？此操作不可撤销。`}
-        confirmText="删除"
-        cancelText="取消"
+        title={t('stockList.confirmDelete')}
+        message={t('stockList.confirmDeleteMessage', { name: deleteConfirm.stock?.name || deleteConfirm.stock?.code })}
+        confirmText={t('stockList.delete')}
+        cancelText={t('stockList.cancel')}
         variant="danger"
       />
     </>
@@ -119,6 +121,7 @@ interface StockRowProps {
 }
 
 function StockRow({ stock, onEdit, onDelete, onRefreshPrice }: StockRowProps) {
+  const { t } = useTranslation();
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const handleRefresh = async () => {
@@ -139,7 +142,7 @@ function StockRow({ stock, onEdit, onDelete, onRefreshPrice }: StockRowProps) {
       </td>
       <td className="px-4 py-3 hidden sm:table-cell">
         <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
-          {getMarketLabel(stock.market)}
+          {t(`market.${stock.market}`)}
         </span>
       </td>
       <td className="px-4 py-3 text-right font-mono text-sm">
@@ -165,14 +168,14 @@ function StockRow({ stock, onEdit, onDelete, onRefreshPrice }: StockRowProps) {
           <button
             onClick={() => onEdit(stock)}
             className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
-            title="编辑"
+            title={t('stockList.edit')}
           >
             <Edit2 className="w-4 h-4 text-gray-500" />
           </button>
           <button
             onClick={() => onDelete(stock)}
             className="p-1.5 hover:bg-danger-50 dark:hover:bg-danger-900/20 rounded transition-colors"
-            title="删除"
+            title={t('stockList.delete')}
           >
             <Trash2 className="w-4 h-4 text-danger-500" />
           </button>
@@ -180,7 +183,7 @@ function StockRow({ stock, onEdit, onDelete, onRefreshPrice }: StockRowProps) {
             onClick={handleRefresh}
             disabled={isRefreshing}
             className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors disabled:opacity-50"
-            title="刷新价格"
+            title={t('stockList.refreshPrice')}
           >
             <RefreshCw className={`w-4 h-4 text-gray-500 ${isRefreshing ? 'animate-spin' : ''}`} />
           </button>

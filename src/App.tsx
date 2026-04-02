@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Card } from '@/components/common';
@@ -13,6 +14,7 @@ import { fetchStockPrice } from '@/services/stockApi';
 import type { Stock } from '@/types';
 
 function App() {
+  const { t } = useTranslation();
   const { 
     profiles, activeProfileId, switchProfile, addProfile, deleteProfile,
     stocks, stocksCalculated, summary, history, 
@@ -24,11 +26,11 @@ function App() {
   const handleSubmit = (stockData: Omit<Stock, 'id' | 'lastUpdated'>) => {
     if (editingStock) {
       updateStock({ ...stockData, id: editingStock.id, lastUpdated: new Date().toISOString() });
-      showToast('修改成功', 'success');
+      showToast(t('toast.updateSuccess'), 'success');
       setEditingStock(null);
     } else {
       addStock(stockData);
-      showToast('添加成功', 'success');
+      showToast(t('toast.addSuccess'), 'success');
     }
     saveHistoryRecord();
   };
@@ -40,7 +42,7 @@ function App() {
 
   const handleDelete = (id: string) => {
     deleteStock(id);
-    showToast('删除成功', 'success');
+    showToast(t('toast.deleteSuccess'), 'success');
   };
 
   const handleRefreshPrice = async (id: string) => {
@@ -50,15 +52,15 @@ function App() {
     try {
       const result = await fetchStockPrice(stock.code, stock.market);
       refreshStockPrice(id, result.price);
-      showToast('价格已更新', 'success');
+      showToast(t('toast.priceUpdated'), 'success');
     } catch {
-      showToast('获取价格失败', 'error');
+      showToast(t('toast.priceUpdateFailed'), 'error');
     }
   };
 
   const handleRefreshAllPrices = async () => {
     if (stocks.length === 0) {
-      showToast('暂无持仓数据', 'warning');
+      showToast(t('toast.noPositionData'), 'warning');
       return;
     }
 
@@ -76,11 +78,11 @@ function App() {
     }
 
     if (successCount > 0 && failCount === 0) {
-      showToast(`成功刷新 ${successCount} 只股票价格`, 'success');
+      showToast(t('toast.refreshSuccess', { count: successCount }), 'success');
     } else if (successCount > 0 && failCount > 0) {
-      showToast(`刷新完成：成功 ${successCount}，失败 ${failCount}`, 'warning');
+      showToast(t('toast.refreshPartialSuccess', { success: successCount, fail: failCount }), 'warning');
     } else {
-      showToast('刷新失败，请检查网络', 'error');
+      showToast(t('toast.refreshFailed'), 'error');
     }
     
     saveHistoryRecord();
@@ -103,7 +105,7 @@ function App() {
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-1 space-y-6">
-            <Card title={editingStock ? '编辑持仓' : '添加持仓'}>
+            <Card title={editingStock ? t('form.editPosition') : t('form.addPositionTitle')}>
               <StockForm
                 onSubmit={handleSubmit}
                 onCancel={handleCancelEdit}

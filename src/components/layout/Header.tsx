@@ -1,4 +1,5 @@
-import { Sun, Moon, TrendingUp, Plus, Trash2 } from 'lucide-react';
+import { Sun, Moon, TrendingUp, Plus, Trash2, Globe } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/common';
 import { useTheme } from '@/hooks/useTheme';
 import type { Profile } from '@/types';
@@ -13,9 +14,14 @@ interface HeaderProps {
 
 export function Header({ profiles, activeProfileId, onSwitchProfile, onAddProfile, onDeleteProfile }: HeaderProps) {
   const { theme, toggleTheme } = useTheme();
+  const { t, i18n } = useTranslation();
+
+  const toggleLanguage = () => {
+    i18n.changeLanguage(i18n.language === 'zh' ? 'en' : 'zh');
+  };
 
   const handleAddProfile = () => {
-    const name = window.prompt('请输入新账户名称：');
+    const name = window.prompt(t('header.enterAccountName'));
     if (name && name.trim()) {
       onAddProfile(name.trim());
     }
@@ -23,10 +29,10 @@ export function Header({ profiles, activeProfileId, onSwitchProfile, onAddProfil
 
   const handleDeleteProfile = () => {
     if (activeProfileId === 'default') {
-      alert('主账户不能删除');
+      alert(t('header.cannotDeleteDefault'));
       return;
     }
-    if (window.confirm('确定要删除当前账户及其所有数据吗？此操作不可恢复。')) {
+    if (window.confirm(t('header.confirmDeleteAccount'))) {
       onDeleteProfile(activeProfileId);
     }
   };
@@ -41,10 +47,10 @@ export function Header({ profiles, activeProfileId, onSwitchProfile, onAddProfil
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-                Portfolio Analyzer
+                {t('app.title')}
               </h1>
               <p className="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">
-                持仓分析工具
+                {t('app.subtitle')}
               </p>
             </div>
           </div>
@@ -60,11 +66,11 @@ export function Header({ profiles, activeProfileId, onSwitchProfile, onAddProfil
                   <option key={p.id} value={p.id}>{p.name}</option>
                 ))}
               </select>
-              <Button variant="ghost" size="sm" onClick={handleAddProfile} className="p-2" title="添加账户">
+              <Button variant="ghost" size="sm" onClick={handleAddProfile} className="p-2" title={t('header.addAccount')}>
                 <Plus className="w-4 h-4" />
               </Button>
               {activeProfileId !== 'default' && (
-                <Button variant="ghost" size="sm" onClick={handleDeleteProfile} className="p-2 text-danger-500 hover:text-danger-600" title="删除当前账户">
+                <Button variant="ghost" size="sm" onClick={handleDeleteProfile} className="p-2 text-danger-500 hover:text-danger-600" title={t('header.deleteAccount')}>
                   <Trash2 className="w-4 h-4" />
                 </Button>
               )}
@@ -83,6 +89,16 @@ export function Header({ profiles, activeProfileId, onSwitchProfile, onAddProfil
               ) : (
                 <Sun className="w-5 h-5" />
               )}
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleLanguage}
+              className="p-2"
+              title={i18n.language === 'zh' ? 'English' : '中文'}
+            >
+              <Globe className="w-5 h-5" />
             </Button>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PieChart as PieChartIcon, BarChart as BarChartIcon, TrendingUp, Grid3X3 } from 'lucide-react';
 import { Card, EmptyState } from '@/components/common';
 import { PieChart } from './PieChart';
@@ -7,22 +8,23 @@ import { LineChart } from './LineChart';
 import { TreeMap } from './TreeMap';
 import type { ChartsProps, ChartType } from '@/types';
 
-const tabs: { id: ChartType; label: string; icon: React.ReactNode }[] = [
-  { id: 'pie', label: '饼图', icon: <PieChartIcon className="w-4 h-4" /> },
-  { id: 'bar', label: '柱状图', icon: <BarChartIcon className="w-4 h-4" /> },
-  { id: 'line', label: '折线图', icon: <TrendingUp className="w-4 h-4" /> },
-  { id: 'treemap', label: '树形图', icon: <Grid3X3 className="w-4 h-4" /> },
+const tabs: { id: ChartType; labelKey: string; icon: React.ReactNode }[] = [
+  { id: 'pie', labelKey: 'charts.pie', icon: <PieChartIcon className="w-4 h-4" /> },
+  { id: 'bar', labelKey: 'charts.bar', icon: <BarChartIcon className="w-4 h-4" /> },
+  { id: 'line', labelKey: 'charts.line', icon: <TrendingUp className="w-4 h-4" /> },
+  { id: 'treemap', labelKey: 'charts.treemap', icon: <Grid3X3 className="w-4 h-4" /> },
 ];
 
 export function Charts({ stocks, summary, history }: ChartsProps) {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<ChartType>('pie');
 
   if (stocks.length === 0) {
     return (
-      <Card title="持仓分析">
+      <Card title={t('charts.title')}>
         <EmptyState
-          title="暂无数据"
-          description="添加持仓后即可查看分析图表"
+          title={t('charts.noData')}
+          description={t('charts.noDataDescription')}
         />
       </Card>
     );
@@ -31,9 +33,9 @@ export function Charts({ stocks, summary, history }: ChartsProps) {
   return (
     <Card>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">持仓分析</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{t('charts.title')}</h3>
         <div className="text-sm text-gray-500 dark:text-gray-400">
-          总市值: ¥{summary.totalMarketValue.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}
+          {t('charts.totalMarketValue')}: ¥{summary.totalMarketValue.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}
           <span className={`ml-2 ${summary.totalProfit >= 0 ? 'text-success-500' : 'text-danger-500'}`}>
             ({summary.totalProfit >= 0 ? '+' : ''}{summary.totalProfit.toLocaleString('zh-CN', { minimumFractionDigits: 2 })})
           </span>
@@ -52,7 +54,7 @@ export function Charts({ stocks, summary, history }: ChartsProps) {
             }`}
           >
             {tab.icon}
-            {tab.label}
+            {t(tab.labelKey)}
           </button>
         ))}
       </div>

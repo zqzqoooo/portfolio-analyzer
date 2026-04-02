@@ -1,0 +1,125 @@
+{
+  "app": {
+    "title": "Portfolio Analyzer",
+    "subtitle": "Position Analysis Tool"
+  },
+  "header": {
+    "addAccount": "Add Account",
+    "deleteAccount": "Delete Account",
+    "enterAccountName": "Enter account name:",
+    "cannotDeleteDefault": "Cannot delete default account",
+    "confirmDeleteAccount": "Are you sure you want to delete the current account and all its data? This action cannot be undone."
+  },
+  "footer": {
+    "version": "Portfolio Analyzer v1.0",
+    "dataStoredLocally": "Data is stored locally in browser only"
+  },
+  "form": {
+    "market": "Market",
+    "stockCode": "Stock Code",
+    "stockName": "Stock Name",
+    "buyPrice": "Buy Price",
+    "quantity": "Quantity",
+    "buyDate": "Buy Date",
+    "currentPrice": "Current Price",
+    "industry": "Industry",
+    "autoFetch": "Auto Fetch",
+    "cancel": "Cancel",
+    "save": "Save Changes",
+    "add": "Add Position",
+    "enterStockCode": "e.g. 600519",
+    "enterStockCodeHK": "e.g. 00700",
+    "enterStockCodeUS": "e.g. AAPL",
+    "codeHintCN": "6-digit code",
+    "codeHintHK": "4-5 digit code",
+    "codeHintUS": "1-5 letter code",
+    "optionalAutoFetch": "Optional, auto-fetch available",
+    "integer": "Integer",
+    "selectIndustry": "Select Industry",
+    "placeholderOptional": "Optional",
+    "enterCodeFirst": "Please enter stock code first",
+    "fetchPriceFailed": "Failed to fetch price",
+    "editPosition": "Edit Position",
+    "addPositionTitle": "Add Position"
+  },
+  "stockList": {
+    "title": "Position List",
+    "noData": "No Position Data",
+    "noDataDescription": "Please add your stock positions to start analyzing your portfolio",
+    "totalStocks": "{{count}} stock(s)",
+    "code": "Code",
+    "name": "Name",
+    "market": "Market",
+    "buyPrice": "Buy Price",
+    "quantity": "Qty",
+    "currentPrice": "Current Price",
+    "marketValue": "Market Value",
+    "profitLoss": "P/L",
+    "actions": "Actions",
+    "refreshAll": "Refresh All",
+    "edit": "Edit",
+    "delete": "Delete",
+    "refreshPrice": "Refresh Price",
+    "confirmDelete": "Confirm Delete",
+    "confirmDeleteMessage": "Are you sure you want to delete {{name}}? This action cannot be undone.",
+    "cancel": "Cancel"
+  },
+  "charts": {
+    "title": "Position Analysis",
+    "noData": "No Data",
+    "noDataDescription": "Add positions to view analysis charts",
+    "totalMarketValue": "Total Market Value",
+    "pie": "Pie Chart",
+    "bar": "Bar Chart",
+    "line": "Line Chart",
+    "treemap": "Treemap"
+  },
+  "dataIO": {
+    "exportFormat": "Export Format:",
+    "exportData": "Export Data",
+    "importData": "Import Data",
+    "noDataToExport": "No data to export",
+    "exportSuccess": "Export successful",
+    "importSuccess": "Successfully imported {{count}} record(s)",
+    "noValidData": "No valid data in file",
+    "invalidFormat": "Invalid file format, please check file content"
+  },
+  "toast": {
+    "addSuccess": "Added successfully",
+    "updateSuccess": "Updated successfully",
+    "deleteSuccess": "Deleted successfully",
+    "priceUpdated": "Price updated",
+    "priceUpdateFailed": "Failed to get price",
+    "noPositionData": "No position data",
+    "refreshSuccess": "Successfully refreshed {{count}} stock price(s)",
+    "refreshPartialSuccess": "Refresh completed: {{success}} succeeded, {{fail}} failed",
+    "refreshFailed": "Refresh failed, please check network"
+  },
+  "market": {
+    "CN": "A-Share",
+    "HK": "HK-Share",
+    "US": "US-Share"
+  },
+  "industry": {
+    "科技": "Technology",
+    "金融": "Finance",
+    "医药": "Healthcare",
+    "消费": "Consumer",
+    "能源": "Energy",
+    "房地产": "Real Estate",
+    "工业": "Industrial",
+    "材料": "Materials",
+    "公用事业": "Utilities",
+    "通信": "Telecom",
+    "可选消费": "Consumer Discretionary",
+    "必需消费": "Consumer Staples",
+    "其他": "Other"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Info"
+  }
+}

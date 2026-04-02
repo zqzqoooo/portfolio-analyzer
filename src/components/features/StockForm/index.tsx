@@ -1,21 +1,11 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { RefreshCw } from 'lucide-react';
 import { Button, Input, Select } from '@/components/common';
 import { validateStockForm } from './validation';
 import { fetchStockPrice } from '@/services/stockApi';
 import { MARKET_CONFIG, INDUSTRY_LIST } from '@/utils/constants';
 import type { Stock, StockFormProps, FormState, FormErrors, Market } from '@/types';
-
-const marketOptions = [
-  { value: 'CN', label: 'A股' },
-  { value: 'HK', label: '港股' },
-  { value: 'US', label: '美股' },
-];
-
-const industryOptions = [
-  { value: '', label: '请选择行业' },
-  ...INDUSTRY_LIST.map(i => ({ value: i, label: i })),
-];
 
 function getInitialState(initialData?: Stock): FormState {
   return {
@@ -31,9 +21,21 @@ function getInitialState(initialData?: Stock): FormState {
 }
 
 export function StockForm({ onSubmit, onCancel, initialData, isEditing }: StockFormProps) {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState<FormState>(() => getInitialState(initialData));
   const [errors, setErrors] = useState<FormErrors>({});
   const [isFetching, setIsFetching] = useState(false);
+
+  const marketOptions = useMemo(() => [
+    { value: 'CN', label: t('market.CN') },
+    { value: 'HK', label: t('market.HK') },
+    { value: 'US', label: t('market.US') },
+  ], [t]);
+
+  const industryOptions = useMemo(() => [
+    { value: '', label: t('form.selectIndustry') },
+    ...INDUSTRY_LIST.map(i => ({ value: i, label: t(`industry.${i}`) })),
+  ], [t]);
 
   const handleChange = (field: keyof FormState, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -55,7 +57,7 @@ export function StockForm({ onSubmit, onCancel, initialData, isEditing }: StockF
 
   const handleAutoFetchPrice = async () => {
     if (!formData.code) {
-      setErrors(prev => ({ ...prev, code: '请先输入股票代码' }));
+      setErrors(prev => ({ ...prev, code: t('form.enterCodeFirst') }));
       return;
     }
 
@@ -70,7 +72,7 @@ export function StockForm({ onSubmit, onCancel, initialData, isEditing }: StockF
     } catch (error) {
       setErrors(prev => ({ 
         ...prev, 
-        currentPrice: error instanceof Error ? error.message : '获取股价失败' 
+        currentPrice: error instanceof Error ? error.message : t('form.fetchPriceFailed') 
       }));
     } finally {
       setIsFetching(false);
@@ -105,17 +107,17 @@ export function StockForm({ onSubmit, onCancel, initialData, isEditing }: StockF
 
   const getCodePlaceholder = () => {
     switch (formData.market) {
-      case 'CN': return '如：600519';
-      case 'HK': return '如：00700';
-      case 'US': return '如：AAPL';
+      case 'CN': return t('form.enterStockCode');
+      case 'HK': return t('form.enterStockCodeHK');
+      case 'US': return t('form.enterStockCodeUS');
     }
   };
 
   const getCodeHint = () => {
     switch (formData.market) {
-      case 'CN': return '6位数字代码';
-      case 'HK': return '4-5位数字代码';
-      case 'US': return '1-5位字母代码';
+      case 'CN': return t('form.codeHintCN');
+      case 'HK': return t('form.codeHintHK');
+      case 'US': return t('form.codeHintUS');
     }
   };
 
@@ -123,7 +125,7 @@ export function StockForm({ onSubmit, onCancel, initialData, isEditing }: StockF
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Select
-          label="市场"
+          label={t('form.market')}
           options={marketOptions}
           value={formData.market}
           onChange={(e) => handleMarketChange(e.target.value)}
@@ -131,7 +133,7 @@ export function StockForm({ onSubmit, onCancel, initialData, isEditing }: StockF
         />
         
         <Input
-          label="股票代码"
+          label={t('form.stockCode')}
           value={formData.code}
           onChange={(e) => handleChange('code', e.target.value)}
           placeholder={getCodePlaceholder()}
@@ -141,15 +143,15 @@ export function StockForm({ onSubmit, onCancel, initialData, isEditing }: StockF
         />
         
         <Input
-          label="股票名称"
+          label={t('form.stockName')}
           value={formData.name}
           onChange={(e) => handleChange('name', e.target.value)}
-          placeholder="可选，自动获取"
+          placeholder={t('form.placeholderOptional')}
           error={errors.name}
         />
         
         <Input
-          label="买入价格"
+          label={t('form.buyPrice')}
           type="number"
           step="0.001"
           min="0"
@@ -161,19 +163,19 @@ export function StockForm({ onSubmit, onCancel, initialData, isEditing }: StockF
         />
         
         <Input
-          label="持仓数量"
+          label={t('form.quantity')}
           type="number"
           min="1"
           step="1"
           value={formData.quantity}
           onChange={(e) => handleChange('quantity', e.target.value)}
-          placeholder="整数"
+          placeholder={t('form.integer')}
           error={errors.quantity}
           required
         />
         
         <Input
-          label="买入日期"
+          label={t('form.buyDate')}
           type="date"
           value={formData.buyDate}
           onChange={(e) => handleChange('buyDate', e.target.value)}
@@ -184,7 +186,7 @@ export function StockForm({ onSubmit, onCancel, initialData, isEditing }: StockF
         
         <div className="md:col-span-2">
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            当前价格
+            {t('form.currentPrice')}
           </label>
           <div className="flex gap-2">
             <Input
@@ -205,13 +207,13 @@ export function StockForm({ onSubmit, onCancel, initialData, isEditing }: StockF
               className="whitespace-nowrap"
             >
               <RefreshCw className="w-4 h-4 mr-1" />
-              自动获取
+              {t('form.autoFetch')}
             </Button>
           </div>
         </div>
         
         <Select
-          label="所属行业"
+          label={t('form.industry')}
           options={industryOptions}
           value={formData.industry}
           onChange={(e) => handleChange('industry', e.target.value)}
@@ -221,11 +223,11 @@ export function StockForm({ onSubmit, onCancel, initialData, isEditing }: StockF
       <div className="flex justify-end gap-2 pt-2">
         {isEditing && (
           <Button type="button" variant="secondary" onClick={onCancel}>
-            取消
+            {t('form.cancel')}
           </Button>
         )}
         <Button type="submit">
-          {isEditing ? '保存修改' : '添加持仓'}
+          {isEditing ? t('form.save') : t('form.add')}
         </Button>
       </div>
     </form>
